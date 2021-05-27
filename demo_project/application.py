@@ -32,7 +32,8 @@ def query():
 		PersonID = request.form['PersonID']
 		print(PersonID)
 		print(type(PersonID))
-		info = "select * from REID where person == '{}'".format(PersonID)
+		info = "select * from REID where person = '{}'".format(PersonID)
+		print(info)
 		cur.execute(info)
 		data = cur.fetchall()
 		print(type(data))
