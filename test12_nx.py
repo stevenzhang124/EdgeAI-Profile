@@ -244,6 +244,7 @@ def handle_frames(frame):
 			info = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(identify_name, int(time.time()), c1)
 			cur.execute(info)
 			mydb.close()
+			time.sleep(1)
 			if(identify_name in [ "MJ1","MJ2","MJ3","MJ4","MJ5","MJ6","MJ7","MJ8","MJ9","MJ10","MJ11","MJ12","MJ13","MJ14"]):
 				identify_name = "Person_1"
 				c1 = 118
