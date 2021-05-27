@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import mysql.connector
 import json
+from datetime import datetime
 
 application = Flask(__name__, static_url_path='/static')
 #app = Flask(__name__)
@@ -38,9 +39,11 @@ def query():
 		data = cur.fetchall()
 		print(type(data))
 
-		results = ""
+		results = '''<thead><tr><th>PersonID</th><th>Time</th><th>Location</th></tr></thead><tbody>'''
 		for item in data:
-			results += "<tr><td>"+ str(item[1])+"</td>"+"<td>"+ str(item[2])+"</td>"+"<td>"+str(item[3])+"</td>"+"</tr>"
+			results += "<tr><td>"+ str(item[1])+"</td>"+"<td>"+ str(datetime.fromtimestamp(item[2]))+"</td>"+"<td>"+str(item[3])+"</td>"+"</tr>"
+
+		results.append("</tbody>")
 
 		return results
 

@@ -5,21 +5,42 @@
     <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
     <style>
         body {
-            background-color: #f8f9f9;
+            background-color: #F8F8FF;
             }
-      .left {
+
+        .left {
         float: left;
-        width: 1500px;
+        width: 1300px;
         height: 800px;
         
         margin-right: -300px;
-      }
+        }
       .right {
         float: right;
         width: 350px;
         height: 800px;
         
-      }
+        }
+        button {
+            font: inherit;
+            text-transform: uppercase;
+            height: 40px;
+            padding: 0 16px;
+            border: 1px solid #111;
+            border-radius: 4px;
+            background: none;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+          --webkit-transition: all 0.3s;
+          --moz-transition: all 0.3s;
+        }
+
+        button:hover {
+            background-color: #111;
+            color: white;
+        }
+      
     </style>
 </head>
 <body>
@@ -46,25 +67,28 @@
 </div>
 
 <div class="right">
-    <center><h3>Query Pedestrian Trajectory</h3></center>
+    <center>
+    <h3>Camera Distribution in the Indoor Environment</h3>
+    <img src="/static/cameras.png" width="300pt">
+    <br>
+    <br>
+    <h3>Query Pedestrian Trajectory</h3>
+    
 
     <form method = "post" id = "form">
          <p>Person ID <input type = "text" id = "PID" name = "PersonID" /></p>
          <button class="btn btn-lg btn-primary btn-block" type="button">Query</button>
     </form>
+    <br>
+    <br>
+
+    <!-- ><h3>Pedestrian Trajectory</h3><-->
 
     <table id = "table" border=1>
-        <thead>
-            <tr>
-               <th>PersonID</th>
-               <th>Time</th>
-               <th>Location</th>
-            </tr>            
-         </thead>
-         <tbody id = "tbody">
-         </tbody>
 
     </table>
+    </center>
+
     
 </div>
 
@@ -80,7 +104,7 @@
                 type: 'POST',
                 success: function(results){
                     alert(results);
-                    $("#tbody").append(results)
+                    $("#table").append(results)
 
                     //var test_data = [[1,2,3], [4,5,6]];                    
                     //showTable(results)
