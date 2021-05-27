@@ -15,6 +15,7 @@ from scipy.optimize import linear_sum_assignment as linear_assignment
 from pedestrian_detection_ssdlite import api
 from reid import cam_reid
 from matplotlib import pyplot as plt
+import mysql.connector
 
 # global variables to be used in the code for tracker
 max_age=5
@@ -185,7 +186,14 @@ def draw_box_label(img, bbox_cv2, box_color=(0, 255, 255), personReID_info={'per
             
     return img    
 
-
+def db_connection():
+    mydb = mysql.connector.connect( host = '192.168.1.100',
+    user = 'cqy',
+    port = '3306',
+    database = 'edgedemo',
+    passwd = '123456',
+    autocommit = True)
+    return mydb
 
 def handle_frames(frame):
 
@@ -193,6 +201,10 @@ def handle_frames(frame):
 	global max_age
 	global min_hits
 	global track_id_list
+
+	#connect to database
+	mydb = db_connection()
+	cur = mydb.cursor()
 
 	detection_results = api.get_person_bbox(frame, thr=0.5)
 	
@@ -229,6 +241,10 @@ def handle_frames(frame):
 			identify_name, score = compare.run(person, origin_f, origin_name)
 			if(identify_name in [ "MJ1","MJ2","MJ3","MJ4","MJ5","MJ6","MJ7","MJ8","MJ9","MJ10","MJ11","MJ12","MJ13","MJ14"]):
 				identify_name = "Person_1"
+				c1 = 108
+				info = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(identify_name, int(time.time()), c1)
+				cur.execute(info)
+				mydb.close()
 			#elif(identify_name in ["QY1", "QY2", "QY3", "QY4", "QY5"]):
 			#	identify_name = "Person_2"
 			print("identify name:{}, score:{}".format(identify_name, round(1-score, 2)))
