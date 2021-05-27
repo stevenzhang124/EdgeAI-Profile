@@ -247,12 +247,13 @@ def handle_frames(frame):
 			# time.sleep(1)
 			if(identify_name in [ "MJ1","MJ2","MJ3","MJ4","MJ5","MJ6","MJ7","MJ8","MJ9","MJ10","MJ11","MJ12","MJ13","MJ14"]):
 				identify_name = "Person_1"
-				c1 = 118
+				c1 = 117
 				#connect to database
 				mydb = db_connection()
 				cur = mydb.cursor()
 				info = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(identify_name, int(time.time()), c1)
 				cur.execute(info)
+				print("insert one record")
 				mydb.close()
 			#elif(identify_name in ["QY1", "QY2", "QY3", "QY4", "QY5"]):
 			#	identify_name = "Person_2"
@@ -344,7 +345,7 @@ def gen_frames():  # generate frame by frame from camera
 	#cap = open_cam_onboard(640, 480)
 	#uri = "rtsp://admin:admin@192.168.1.106:554/stream2"
 	
-	uri = "rtsp://admin:edge1234@192.168.1.118:554/cam/realmonitor?channel=1&subtype=0"
+	uri = "rtsp://admin:edge1234@192.168.1.117:554/cam/realmonitor?channel=1&subtype=0"
 	cap = open_cam_rtsp(uri, 640, 480, 200)
 
 

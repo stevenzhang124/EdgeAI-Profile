@@ -40,7 +40,7 @@ def query():
 
 		results = ""
 		for item in data:
-			results += "<tr><td>"+ str(item[0])+"</td>"+"<td>"+ str(item[1])+"</td>"+"<td>"+str(item[2])+"</td>"+"</tr>"
+			results += "<tr><td>"+ str(item[1])+"</td>"+"<td>"+ str(item[2])+"</td>"+"<td>"+str(item[3])+"</td>"+"</tr>"
 
 		return results
 

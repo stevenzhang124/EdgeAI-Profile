@@ -238,6 +238,7 @@ def handle_frames(frame):
 				cur = mydb.cursor()
 				info = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(identify_name, int(time.time()), c1)
 				cur.execute(info)
+				print("insert one record")
 				mydb.close()
 			#elif(identify_name in ["QY1", "QY2", "QY3", "QY4", "QY5"]):
 			#	identify_name = "Person_2"
