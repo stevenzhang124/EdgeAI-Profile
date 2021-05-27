@@ -202,9 +202,7 @@ def handle_frames(frame):
 	global min_hits
 	global track_id_list
 
-	#connect to database
-	mydb = db_connection()
-	cur = mydb.cursor()
+	
 
 	detection_results = api.get_person_bbox(frame, thr=0.5)
 	
@@ -242,6 +240,9 @@ def handle_frames(frame):
 			if(identify_name in [ "MJ1","MJ2","MJ3","MJ4","MJ5","MJ6","MJ7","MJ8","MJ9","MJ10","MJ11","MJ12","MJ13","MJ14"]):
 				identify_name = "Person_1"
 				c1 = 108
+				#connect to database
+				mydb = db_connection()
+				cur = mydb.cursor()
 				info = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(identify_name, int(time.time()), c1)
 				cur.execute(info)
 				mydb.close()
