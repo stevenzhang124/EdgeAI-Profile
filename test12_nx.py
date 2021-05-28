@@ -20,16 +20,18 @@ import mysql.connector
 # global variables to be used in the code for tracker
 max_age=5
 min_hits=1
+tmp = 0
+tmp2 = 0
 
 app = Flask(__name__)
 
-logging.basicConfig(
-	stream=sys.stdout,
-	format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-	datefmt=' %I:%M:%S ',
-	level="INFO"
-)
-logger = logging.getLogger('detector')
+# logging.basicConfig(
+# 	stream=sys.stdout,
+# 	format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+# 	datefmt=' %I:%M:%S ',
+# 	level="INFO"
+# )
+# logger = logging.getLogger('detector')
 
 '''
 def open_cam_onboard(width, height):
@@ -53,7 +55,7 @@ origin_f, origin_name = compare.encode_origin_image()
 
 tracker_list =[] # list for trackers
 # list for track ID
-track_id_list= deque(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'])
+track_id_list= deque(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'])
 
 
 def open_cam_onboard(width, height):
@@ -201,6 +203,8 @@ def handle_frames(frame):
 	global max_age
 	global min_hits
 	global track_id_list
+	global tmp
+	global tmp2
 
 	
 
@@ -245,18 +249,30 @@ def handle_frames(frame):
 			# cur.execute(info)
 			# mydb.close()
 			# time.sleep(1)
-			if(identify_name in [ "MJ1","MJ2","MJ3","MJ4","MJ5","MJ6","MJ7","MJ8","MJ9","MJ10","MJ11","MJ12","MJ13","MJ14"]):
+			
+			if(identify_name in [ "MJ1","MJ2","MJ3","MJ4","MJ5","MJ6","MJ7","MJ8","MJ9","MJ10","MJ11","MJ12","MJ13","MJ14","MJ15","MJ16","MJ17"]):				
 				identify_name = "Person_1"
 				c1 = 117
 				#connect to database
-				mydb = db_connection()
-				cur = mydb.cursor()
-				info = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(identify_name, int(time.time()), c1)
-				cur.execute(info)
-				print("insert one record")
-				mydb.close()
-			#elif(identify_name in ["QY1", "QY2", "QY3", "QY4", "QY5"]):
-			#	identify_name = "Person_2"
+				if int(time.time()) - tmp > 15:
+					mydb = db_connection()
+					cur = mydb.cursor()
+					info = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(identify_name, int(time.time()), c1)
+					tmp = int(time.time())
+					cur.execute(info)
+					print("insert one record", tmp)
+					mydb.close()
+			elif(identify_name in ["QY1", "QY2", "QY3", "QY4", "QY5","QY6","QY7","QY8","QY9","QY10"]):
+				identify_name = "Person_2"
+				c1 = 117
+				if int(time.time()) - tmp2 > 15:
+					mydb = db_connection()
+					cur = mydb.cursor()
+					info = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(identify_name, int(time.time()), c1)
+					tmp2 = int(time.time())
+					cur.execute(info)
+					print("insert one record", tmp)
+					mydb.close()
 			print("identify name:{}, score:{}".format(identify_name, round(1-score, 2)))
 			
 			#generate a new tracker for the person
@@ -294,9 +310,9 @@ def handle_frames(frame):
 			x_cv2 = trk.box
 			trackerID_str="Unknown Person:"+str(trk.id)
 			if trk.personReID_info['personID'] == "Unknown":
-				frame= draw_box_label(frame, x_cv2,personReID_info={'personID':trackerID_str}) # Draw the bounding boxes for unknown person
+				frame= draw_box_label(frame, x_cv2, box_color=(0, 255, 128), personReID_info={'personID':trackerID_str}) # Draw the bounding boxes for unknown person
 			else:
-				frame= draw_box_label(frame, x_cv2,personReID_info=trk.personReID_info) # Draw the bounding boxes for re-identified person
+				frame= draw_box_label(frame, x_cv2, box_color=(0, 255, 255), personReID_info=trk.personReID_info) # Draw the bounding boxes for re-identified person
 	#book keeping
 	deleted_tracks = filter(lambda x: x.no_losses > max_age, tracker_list)
 
@@ -366,22 +382,22 @@ def gen_frames():  # generate frame by frame from camera
 		#	print(counter)
 		#	continue
 		t1 = time.time()
-		print ("before read:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+		#print ("before read:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 		if counter % 5 != 0:
 			ret, frame = cap.read()
-			print ("after read", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+			#print ("after read", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 			continue
 
-		logger.info("FPS: {0:.2f}".format(frame_rate_calc))
+		#logger.info("FPS: {0:.2f}".format(frame_rate_calc))
 		#cv2.putText(frame, "FPS: {0:.2f}".format(frame_rate_calc), (20, 20),
 		#			cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 0), 2, cv2.LINE_AA)
 
 		#result = api.get_person_bbox(frame, thr=0.6)  #add functions to this line
 		frame = handle_frames(frame)
-		print ("after handle", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+		#print ("after handle", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
 		t2 = time.time()
-		print("one frame takes {0:.2f}".format(t2-t1))
+		#print("one frame takes {0:.2f}".format(t2-t1))
 		frame_rate_calc = 1 / (t2 - t1)
 		#if frame_rate_calc < 15:
 		#	frame_rate_calc = 2*frame_rate_calc

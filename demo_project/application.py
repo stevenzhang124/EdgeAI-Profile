@@ -43,7 +43,7 @@ def query():
 		for item in data:
 			results += "<tr><td>"+ str(item[1])+"</td>"+"<td>"+ str(datetime.fromtimestamp(item[2]))+"</td>"+"<td>"+str(item[3])+"</td>"+"</tr>"
 
-		results.append("</tbody>")
+		results += "</tbody>"
 
 		return results
 
