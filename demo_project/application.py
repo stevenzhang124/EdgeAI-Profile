@@ -10,7 +10,7 @@ application = Flask(__name__, static_url_path='/static')
 
 @application.route('/')
 def index():
-	return render_template('index.html')
+	return render_template('output.html')
 
 def db_connection():
     mydb = mysql.connector.connect( host = '192.168.1.100',

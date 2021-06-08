@@ -16,9 +16,10 @@ print("Opened database successfully")
 
 p1 = "Person_1"
 p2 = "Person_2"
-c1 = 1
-c2 = 2
-c3 = 3
+c1 = 116
+c2 = 106
+c3 = 117
+c4 = 113
 
 sql1 = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(str(p1), int(time.time()), c1)
 print(sql1)
@@ -26,15 +27,19 @@ cur.execute(sql1)
 
 time.sleep(1)
 
-sql2 = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(str(p1), int(time.time()), c3)
+sql2 = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(str(p1), int(time.time()), c2)
 print(sql2)
 cur.execute(sql2)
 
 time.sleep(1)
 
-sql3 = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(str(p1), int(time.time()), c2)
+sql3 = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(str(p1), int(time.time()), c3)
 print(sql3)
 cur.execute(sql3)
+
+sql4 = "insert into REID(person,ctime, camera) values ('{0}',{1},{2})".format(str(p1), int(time.time()), c4)
+print(sql4)
+cur.execute(sql4)
 
 
 
