@@ -1,12 +1,12 @@
 import mysql.connector
 
 def db_connection():
-    mydb = mysql.connector.connect( host = '192.168.1.100',
-    user = 'cqy',
-    port = '3306',
-    database = 'edgedemo',
-    passwd = '123456',
-    autocommit = True)
+    mydb = mysql.connector.connect(host='192.168.1.100',  # 192.168.1.100
+								   user='cqy',
+								   port='3306',
+								   database='edgedemo',
+								   passwd='123456',
+								   autocommit=True)
     return mydb
 
 mydb = db_connection()
