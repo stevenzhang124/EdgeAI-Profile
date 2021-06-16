@@ -1,8 +1,10 @@
 from flask import Flask, request
-from reid import cam_reid
+#from reid import cam_reid
 import psutil  #pip3 install psutil
 import GPUtil
+import json
 
+'''
 def open_cam_rtsp(uri, width, height, latency):
 	gst_str = ('rtspsrc location={} latency={} ! '
 			   'rtph264depay ! h264parse ! omxh264dec ! '
@@ -86,7 +88,14 @@ def server_inference(persons):
 
 
 def offload():
+	url = 'http://127.0.0.1:5000/reid'
+
+
+
 	pass
+
+'''
+app = Flask(__name__)
 
 @app.route('/get_status', methods=['GET'])
 def get_status():
@@ -98,7 +107,27 @@ def get_status():
 	for gpu in Gpus:
 		gpu_usage = gpu.memoryUtil * 100
 
-	return cpu_usage, mem_usage, gpu_usage
+	info = {}
+	info['node'] = '192.168.1.100'
+	info['cpu_usage'] = cpu_usage
+	info['mem_usage'] = mem_usage
+	info['gpu_usage'] = gpu_usage
 
+	print(info)
+
+	return json.dumps(info)
+
+@app.route('/reid', methods=['POST'])
+def server_inference():
+	#get the required parameters: cropped images
+	data = request.get_json()
+	print(type(data))
+	print(data['0'])
+	
+
+
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
 
 
