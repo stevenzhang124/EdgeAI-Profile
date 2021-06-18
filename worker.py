@@ -3,8 +3,9 @@ from flask import Flask, request
 import psutil  #pip3 install psutil
 import GPUtil
 import json
+import numpy as np
+import cv2
 
-'''
 def open_cam_rtsp(uri, width, height, latency):
 	gst_str = ('rtspsrc location={} latency={} ! '
 			   'rtph264depay ! h264parse ! omxh264dec ! '
@@ -18,6 +19,7 @@ def open_cam_rtsp(uri, width, height, latency):
 @app.route('/controller', methods=['GET', 'POST'])
 def controller():
 	#parse the message from server
+	messages = request.
 	video_stream = []
 	read_video()
 	#new Thread
@@ -94,7 +96,7 @@ def offload():
 
 	pass
 
-'''
+
 app = Flask(__name__)
 
 @app.route('/get_status', methods=['GET'])
@@ -119,10 +121,24 @@ def get_status():
 
 @app.route('/reid', methods=['POST'])
 def server_inference():
-	#get the required parameters: cropped images
-	data = request.get_json()
-	print(type(data))
-	print(data['0'])
+	detection_test = request.form.to_dict()
+	
+	for key, value in detection_test.items():
+		print(value)
+
+	img = request.files["file"]
+	img.save('a.jpg')
+
+
+	image = cv2.imread('a.jpg')
+	dimensions = image.shape
+	print(dimensions)
+	cv2.imshow("Image", image)
+	cv2.waitKey (0)
+
+
+	return "ok"
+	
 	
 
 
