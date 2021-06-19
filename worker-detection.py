@@ -3,20 +3,26 @@ from flask import Flask, request
 import cv2
 from pedestrian_detection_ssdlite import api
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
-
+executor = ThreadPoolExecutor(1)
 
 
 @app.route('/detection', methods=['POST'])
 def detection():
+	data = request.form.to_dict()
 	img = request.files["file"]
 	img.save('a.jpg')
 	image = cv2.imread('a.jpg')
 
 	detection_test = api.get_person_bbox(image, thr=0.5)
+	print(len(detection_test))
 
-	offload(url, detection_test, image)
+	#url = data['offload-url']
+
+	#executor.submit(offload, url, detection_test, image)
+	return ''
 
 def offload(url, detection_test, img):
 	identify_num = 0
@@ -33,6 +39,7 @@ def offload(url, detection_test, img):
 
 	print(persons)
 	file = {"file": ("file_name.jpg", cv2.imencode(".jpg", img)[1].tobytes(), "image/jpg")}
+	url = 'http://' + url + ':5000/reid'
 	info = requests.post(url, data=persons, files=file)
 
 
@@ -44,5 +51,6 @@ def kill():
 
 
 if __name__ == '__main__':
-
-    app.run(port=5001, debug=True)
+	img = cv2.imread('example.jpg')
+	detection = api.get_person_bbox(img, thr=0.5)
+	app.run(host='0.0.0.0', port=5001, debug=False, threaded = True)

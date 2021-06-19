@@ -23,15 +23,41 @@ def decision(infos):
 	output: each decision for a device, data type of decision is a dictionary
 	'''
 	
-	return decision_list
+	#return decision_list
 
-def message(decision_list):
+def message():
 	'''
 	send the control message to the edge devices
 	'''
+	decision_list_1 = {
+		'url': '192.168.1.103',
+		'uri': '192.168.1.118',
+		'kill-uri': '',
+		'kill-detection': '',
+		'kill-reid': '',
+		'start-detection': '',
+		'start-reid': '',
+		'offload-url': '192.168.1.103'
+	}
+	decision_list_2 = {
+		'url': '192.168.1.103',
+		'uri': '192.168.1.113',
+		'kill-uri': '',
+		'kill-detection': '',
+		'kill-reid': '',
+		'start-detection': '',
+		'start-reid': '',
+		'offload-url': '192.168.1.103'
+	}
+
+	decision_list = []
+	decision_list.append(decision_list_1)
+	decision_list.append(decision_list_2)
+
 	for decision in decision_list:
 		url = 'http://' + decision['url'] + ':5000/controller'
-		info = requests.post(url, data=decision)
+		requests.post(url, data=decision)
+		print("send_once")
 
 
 def main():
@@ -41,6 +67,7 @@ def main():
 	message(decision_list)
 
 #main()
+message()
 
 
 

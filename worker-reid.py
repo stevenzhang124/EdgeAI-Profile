@@ -1,8 +1,10 @@
 from flask import Flask, request
 from reid import cam_reid
+from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
+executor = ThreadPoolExecutor(1)
 reid_mode = cam_reid.reid_model()
 
 # encode origin image
@@ -47,7 +49,8 @@ def reid():
 		print("identify name:{}, score:{}".format(identify_name, round(1-score, 2)))
 		identify_names[key] = identify_name
 		
-	return identify_names
+	#return identify_names
+	return "ok"
 
 @app.route('/kill-reid', methods=['GET'])
 def kill():
@@ -55,4 +58,4 @@ def kill():
 
 if __name__ == '__main__':
 
-    app.run(port=5002, debug=True)
+	app.run(host='0.0.0.0', port=5002, debug=False, threaded = True)

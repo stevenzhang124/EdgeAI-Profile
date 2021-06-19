@@ -7,8 +7,12 @@ import GPUtil
 import json
 import numpy as np
 import cv2
+import sys
+from concurrent.futures import ThreadPoolExecutor
+import time
 
-video_stream = []
+#video_stream = []
+executor = ThreadPoolExecutor(2)
 
 app = Flask(__name__)
 
@@ -24,16 +28,17 @@ def open_cam_rtsp(uri, width, height, latency):
 
 @app.route('/controller', methods=['GET', 'POST'])
 def controller():
-	global video_stream
+	#global video_stream
 
 	#parse the message from server
 	messages = request.form.to_dict()
+	print(messages)
 
-	if messages['url']:
-		video_stream.append(messages['url'])
+	if messages['uri']:
+		video_stream = messages['uri']
 
-	if messages['kill-url']:
-		video_stream.remove(messages['kill-url'])
+	if messages['kill-uri']:
+		video_stream.remove(messages['kill-uri'])
 
 	if messages['kill-detection']:
 		info = requests.get('http://localhost:5001/kill-detection')
@@ -49,15 +54,26 @@ def controller():
 		cmd = "python3 worker-reid.py"
 		subprocess.Popen(cmd, shell=True)
 
+	if messages['offload-url']:
+		offload_url = messages['offload-url']
+
 	#send frames
-	for uri in video_stream:
-		read_video(uri)
+	#for uri in video_stream:
+	if video_stream:
+		uri = "rtsp://admin:edge1234@" + video_stream + ":554/cam/realmonitor?channel=1&subtype=0"
+		#print(uri)
+		executor.submit(read_video, uri, offload_url)
+	return ''
 
 	
-def read_video(uri):
+def read_video(uri, offload_url):
 	#get the video ID
 	#uri = "rtsp://admin:edge1234@192.168.1.108:554/cam/realmonitor?channel=1&subtype=1"
+	t1 = time.time()
 	cap = open_cam_rtsp(uri, 640, 480, 200)
+	t2 = time.time()
+	print("read consumers", t2-t1)
+	
 
 
 	if not cap.isOpened():
@@ -75,11 +91,18 @@ def read_video(uri):
 		if counter % 5 != 0:
 			ret, frame = cap.read()
 			continue
-		break
+		#break
 	
-	file = {"file": ("file_name.jpg", cv2.imencode(".jpg", frame)[1].tobytes(), "image/jpg")}
-	info = requests.post('http://localhost:5001/kill-detection', files=file)
-	
+		file = {"file": ("file_name.jpg", cv2.imencode(".jpg", frame)[1].tobytes(), "image/jpg")}
+		data = {}
+		data['offload-url'] = offload_url
+		t1 = time.time()
+		info = requests.post('http://192.168.1.103:5001/detection', data=data, files=file)
+		t2 = time.time()
+		print("send consumes", t2-t1)
+		print(uri)
+		#print("send once")
+		
 
 
 @app.route('/get_status', methods=['GET'])
@@ -104,6 +127,9 @@ def get_status():
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+	app.run(host='0.0.0.0', port=5000, debug=False, threaded = True)
+	# uri = "rtsp://admin:edge1234@192.168.1.117:554/cam/realmonitor?channel=1&subtype=0"
+	# offload_url = '192.168.1.103'
+	# read_video(uri, offload_url)
 
 
