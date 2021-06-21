@@ -2,12 +2,20 @@ import requests
 import json
 import time
 
+#node ip
+edgeNX1 = '192.168.1.103'     
+edgeNX2 = '192.168.1.114' 
+edgeNX3 = '192.168.1.107'   
+edgeNX4 = '192.168.1.102'   
+imcl = '192.168.1.104'             
+imcl2 = '192.168.1.105'           
+edge = '192.168.1.109'          
 
 def query():
 	'''
 	query the device parameters
 	'''
-	IP_list = ['127.0.0.1']
+	IP_list = [edgeNX1, edgeNX2, edgeNX3, edgeNX4, imcl, imcl2, edge]
 	infos = []
 	for ip in IP_list:
 		info = requests.get('http://' + ip + ':5000/get_status')
@@ -22,6 +30,9 @@ def decision(infos):
 	generate the offloading decisions
 	output: each decision for a device, data type of decision is a dictionary
 	'''
+	#get each node estimated running time, needs to know the current status of each node
+	#apply the greedy algorithm
+	#generate the decision policy
 	
 	#return decision_list
 
