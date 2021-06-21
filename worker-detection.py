@@ -4,10 +4,16 @@ import cv2
 from pedestrian_detection_ssdlite import api
 import sys
 from concurrent.futures import ThreadPoolExecutor
+import time
+from reid import cam_reid
 
 app = Flask(__name__)
 executor = ThreadPoolExecutor(1)
 
+reid_mode = cam_reid.reid_model()
+# encode origin image
+compare = cam_reid.Compare(model=reid_mode, origin_img="./image/origin")
+origin_f, origin_name = compare.encode_origin_image()
 
 @app.route('/detection', methods=['POST'])
 def detection():
@@ -53,4 +59,19 @@ def kill():
 if __name__ == '__main__':
 	img = cv2.imread('example.jpg')
 	detection = api.get_person_bbox(img, thr=0.5)
-	app.run(host='0.0.0.0', port=5001, debug=False, threaded = True)
+	# app.run(host='0.0.0.0', port=5001, debug=False, threaded = True)
+	i = 0
+	t_total = 0
+	while(i < 10 ):
+		file = 'edge' + str(i+1) + '.jpg'
+		img = cv2.imread('./test_img/' +file)
+		t1 = time.time()
+		detection = api.get_person_bbox(img, thr=0.5)
+		print(detection)
+		t2 = time.time()
+		t_tmp = t2-t1
+		t_total = t_total + t_tmp
+		print('detection' + file + 'consumes', t_tmp)
+		i += 1
+	print("average is", t_total/10)
+
