@@ -57,5 +57,4 @@ if __name__ == '__main__':
 		reid_test(detection, img)
 		t2 = time.time()
 		t_tmp = t2-t1
-		t_total.append(t_tmp)
 		print('re-id' + file + 'consumes', t_tmp)
